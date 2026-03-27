@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.0.31903.59
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "BSPHP.CardDemoVB", "BSPHP.CardDemoVB.vbproj", "{2B93AA9B-DA5C-47BC-BB82-43DF4DD2C9B7}"
 EndProject
@@ -17,8 +17,5 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {F360C243-BA61-49B5-A207-16846A6118CB}
 	EndGlobalSection
 EndGlobal

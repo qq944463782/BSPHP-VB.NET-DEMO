@@ -24,24 +24,27 @@ Namespace BSPHP.CardDemoVB
 
         Public Sub New()
             Text = "BSPHP 卡密模式 VB.NET Demo"
-            Width = 980
-            Height = 720
+            Width = 900
+            Height = 660
             StartPosition = FormStartPosition.CenterScreen
 
             _notice.Multiline = True
             _notice.Dock = DockStyle.Top
-            _notice.Height = 90
+            _notice.Height = 72
             _notice.ReadOnly = True
             _notice.Text = "初始化中..."
             Controls.Add(_notice)
 
+            Dim tabHost As New Panel() With {.Dock = DockStyle.Fill, .Padding = New Padding(0, 50, 0, 0)}
             _tabs.Dock = DockStyle.Fill
-            Controls.Add(_tabs)
+            tabHost.Controls.Add(_tabs)
+            Controls.Add(tabHost)
             BuildTabs()
             ApplyUnifiedUiStyle(Me)
+            ApplyMacLikeTheme(Me)
 
             _status.Dock = DockStyle.Bottom
-            _status.Height = 30
+            _status.Height = 24
             _status.Text = "未连接"
             Controls.Add(_status)
 
@@ -73,6 +76,7 @@ Namespace BSPHP.CardDemoVB
         Private Function MakeCardLoginTab() As TabPage
             Dim tab As New TabPage("制作卡密登录模式")
             Dim panel As New FlowLayoutPanel() With {.Dock = DockStyle.Fill, .FlowDirection = FlowDirection.TopDown, .WrapContents = False, .AutoScroll = True}
+            ConfigureStackPanel(panel)
             panel.Controls.Add(_loggedCard)
             panel.Controls.Add(_expiry)
             panel.Controls.Add(New Label() With {.Text = "卡串"})
@@ -106,6 +110,7 @@ Namespace BSPHP.CardDemoVB
         Private Function MakeMachineTab() As TabPage
             Dim tab As New TabPage("机器码账号模式")
             Dim panel As New FlowLayoutPanel() With {.Dock = DockStyle.Fill, .FlowDirection = FlowDirection.TopDown, .WrapContents = False, .AutoScroll = True}
+            ConfigureStackPanel(panel)
             panel.Controls.Add(New Label() With {.Text = "机器码账号"})
             panel.Controls.Add(_machine)
 
@@ -190,7 +195,8 @@ Namespace BSPHP.CardDemoVB
             Try
                 Dim u = _client.GetCodeImageUrl()
                 If String.IsNullOrWhiteSpace(u) Then Return
-                _codeImage.Load(u & "&_=" & DateTimeOffset.Now.ToUnixTimeMilliseconds().ToString())
+                Dim ts As Long = CLng((DateTime.UtcNow - New DateTime(1970, 1, 1)).TotalMilliseconds)
+                _codeImage.Load(u & "&_=" & ts.ToString())
             Catch
             End Try
         End Sub
@@ -198,16 +204,57 @@ Namespace BSPHP.CardDemoVB
         Private Sub ApplyUnifiedUiStyle(root As Control)
             For Each c As Control In root.Controls
                 If TypeOf c Is Button Then
-                    c.Height = 34
-                    c.Width = Math.Max(c.Width, 130)
+                    c.Height = 32
+                    c.Width = Math.Max(c.Width, 120)
                 ElseIf TypeOf c Is TextBox Then
-                    c.Height = 28
-                    c.Font = New Drawing.Font("Microsoft YaHei UI", 10.0F)
+                    c.Height = 26
+                    c.Width = Math.Max(c.Width, 300)
+                    c.Font = New Drawing.Font("Microsoft YaHei UI", 9.5F)
                 ElseIf TypeOf c Is Label Then
-                    c.Font = New Drawing.Font("Microsoft YaHei UI", 10.0F)
+                    c.Font = New Drawing.Font("Microsoft YaHei UI", 9.5F)
                 End If
                 If c.HasChildren Then ApplyUnifiedUiStyle(c)
             Next
+        End Sub
+
+        Private Sub ApplyMacLikeTheme(root As Control)
+            BackColor = Drawing.Color.FromArgb(245, 246, 248)
+            _tabs.Font = New Drawing.Font("Microsoft YaHei UI", 9.5F)
+            _status.BackColor = Drawing.Color.FromArgb(236, 238, 242)
+            _status.ForeColor = Drawing.Color.FromArgb(70, 70, 70)
+            _notice.BackColor = Drawing.Color.White
+            _notice.BorderStyle = BorderStyle.FixedSingle
+            ApplyMacLikeThemeRecursive(root)
+        End Sub
+
+        Private Sub ApplyMacLikeThemeRecursive(root As Control)
+            For Each c As Control In root.Controls
+                If TypeOf c Is Button Then
+                    Dim b = DirectCast(c, Button)
+                    b.FlatStyle = FlatStyle.Flat
+                    b.FlatAppearance.BorderColor = Drawing.Color.FromArgb(198, 201, 206)
+                    b.FlatAppearance.MouseOverBackColor = Drawing.Color.FromArgb(238, 243, 252)
+                    b.BackColor = Drawing.Color.White
+                    b.ForeColor = Drawing.Color.FromArgb(45, 45, 45)
+                    b.Margin = New Padding(6)
+                ElseIf TypeOf c Is TextBox Then
+                    c.BackColor = Drawing.Color.White
+                    c.ForeColor = Drawing.Color.FromArgb(45, 45, 45)
+                    c.Margin = New Padding(6)
+                ElseIf TypeOf c Is Label Then
+                    c.ForeColor = Drawing.Color.FromArgb(64, 64, 64)
+                    c.Margin = New Padding(4)
+                ElseIf TypeOf c Is TabPage Then
+                    c.BackColor = Drawing.Color.FromArgb(248, 249, 251)
+                End If
+                If c.HasChildren Then ApplyMacLikeThemeRecursive(c)
+            Next
+        End Sub
+
+        Private Shared Sub ConfigureStackPanel(panel As FlowLayoutPanel)
+            panel.Padding = New Padding(18, 14, 18, 14)
+            panel.WrapContents = False
+            panel.AutoScroll = True
         End Sub
     End Class
 End Namespace
